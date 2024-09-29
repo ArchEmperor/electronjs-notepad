@@ -75,7 +75,6 @@ const menuTemplate = [
 const path = require('node:path')
 let mainWindow;
 const menu = Menu.buildFromTemplate(menuTemplate);
-let curentTheme="light";
 const createWindow = async () => {
     mainWindow = new BrowserWindow({
         width: 800,
@@ -108,18 +107,8 @@ app.whenReady().then(async () => {
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') app.quit()
 })
-ipcMain.on('theme', (event,newTheme) => {
-    curentTheme=newTheme;
-    mainWindow.webContents.send('themeUpdate', curentTheme);
-})
-ipcMain.on('start', () => {
-    openNotepad();
-})
-ipcMain.on('main', () => {
-    openIndex();
-})
-ipcMain.on('initialized', () => {
-    mainWindow.webContents.send('themeUpdate', curentTheme);
+ipcMain.on('start', async () => {
+    await openNotepad();
 })
 ipcMain.on('fileResponse',async (event, file) => {
     const newFilePath= await saveFile(file);

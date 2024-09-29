@@ -19,7 +19,6 @@ const removeEventListeners = () => {
 const setupEventListeners = () => {
     switchElement?.addEventListener('change', handleThemeChange);
     startBtn?.addEventListener('click', handleStart);
-    window.electron.ipcRenderer.on('themeUpdate', handleThemeUpdate);
     window.electron.ipcRenderer.on('changeWindow', removeEventListeners);
     if(textarea){
         window.electron.ipcRenderer.on('textLoaded', handleTextLoaded);
@@ -39,13 +38,11 @@ const setupEventListeners = () => {
     listenersState=true;
 };
 const setupLocalStorage = () => {
+    handleThemeUpdate();
     if(!switchElement||!recentFiles){
         return;
     }
-    const theme = localStorage.getItem('theme');
-    handleThemeUpdate(theme);
     renderRecentFiles();
-
 }
 const renderRecentFiles = () => {
     const files = getRecentFiles();
@@ -80,16 +77,11 @@ function addRecentFile(filePath) {
     saveRecentFiles(files);
 }
 
-
-
-
-
-
 const handleFileSave = (isSaveAs) => {
     const filePath = filename.innerText;
     const content = textarea.value.toString();
     const openDialog =filePath=="untitled.txt"||isSaveAs;
-    console.log(`Saving file. Path: ${filePath}, Content: ${content}`);
+//console.log(`Saving file. Path: ${filePath}, Content: ${content}`);
 
     if (filePath && content !== undefined) {
         window.electron.ipcRenderer.send('fileResponse', {filePath:filePath, content:content,openDialog:openDialog});
@@ -99,13 +91,14 @@ const handleFileSave = (isSaveAs) => {
 }
 const handleThemeChange = () => {
     if (switchElement.checked) {
-        window.electron.ipcRenderer.send('theme', 'dark');
+        handleThemeUpdate('dark');
     } else {
-        window.electron.ipcRenderer.send('theme', 'light');
+        handleThemeUpdate('light');
     }
+
 };
 const handleTextLoaded = (name,text) => {
-    console.log("recieved name:"+name+", text:", text);
+    //console.log("recieved name:"+name+", text:", text);
     textarea.value = text;
     filename.innerText = name;
     addRecentFile(name);
@@ -114,9 +107,20 @@ const handleStart = () => {
     window.electron.ipcRenderer.send('start');
 };
 const handleThemeUpdate = (newTheme) => {
-    htmlTag.setAttribute("data-bs-theme", newTheme);
-    if(newTheme === 'dark') {switchElement.checked = true}
-    localStorage.setItem('theme', newTheme);
+    let theme;
+    if(newTheme){
+        theme=newTheme;
+    }else{
+        theme = localStorage.getItem('theme');
+        if(!theme){
+
+            theme='light';
+        }
+        if(theme === 'dark'&&switchElement&&switchElement?.checked !== true) {switchElement.checked = true}
+    }
+    //console.log('applied '+theme);
+    htmlTag.setAttribute("data-bs-theme", theme);
+    localStorage.setItem('theme', theme);
 };
 const handleFilepathUpdate = (newPath) => {
     filename.innerText = newPath;
