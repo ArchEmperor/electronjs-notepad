@@ -1,0 +1,30 @@
+{
+  "name": "ElectronNotepad",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^32.1.2",
+    "electron-builder": "^25.0.5"
+  },
+  "scripts": {
+    "start": "electron .",
+    "package": "electron-builder"
+  },
+  "dependencies": {
+    "bootstrap": "^5.3.3"
+  },
+  "build": {
+    "appId": "com.archemperor.notepad",
+    "mac": {
+      "icon": "assets/logo.png"
+    },
+    "win": {
+      "icon": "assets/logo.ico"
+    },
+    "linux": {
+      "icon": "assets/logo.png"
+    }
+  }
+}

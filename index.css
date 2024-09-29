@@ -1,0 +1,14 @@
+.custom-switch:focus {
+    outline: none;
+    box-shadow: none;  /* Убираем голубую тень при фокусе */
+}
+.custom-switch {
+     transform: scale(2);  /* Увеличиваем размер переключателя */
+ }
+.custom-svg{
+    transform: scale(1.5);  /* Увеличиваем размер переключателя */
+}
+#recent-files {
+    max-height: 50vh;
+    overflow-y: auto;
+}
